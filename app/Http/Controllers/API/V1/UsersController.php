@@ -11,9 +11,7 @@ class UsersController extends APIController
 {
     public function __construct(private UserRepositoryInterface $userRepository)
     {
-
     }
-
 
     public function store(Request $request)
     {
@@ -24,17 +22,40 @@ class UsersController extends APIController
             'password' => 'required|string',
         ]);
         $this->userRepository->create([
-            'full_name' => $request->fullname,
+            'full_name' => $request->full_name,
             'email' => $request->email,
             'mobile' => $request->mobile,
             'password' => app('hash')->make($request->password),
         ]);
         return $this->respondCreated('کاربر با موفقیت ایجاد شد  ', [
-            'full_name' => $request->fullname,
+            'full_name' => $request->full_name,
             'email' => $request->email,
             'mobile' => $request->mobile,
             'password' => $request->password,
         ]);
 
+    }
+
+
+    public function updateInfo(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|string',
+            'full_name' => 'required|string|min:3|max:255',
+            'email' => 'required|email',
+            'mobile' => 'required|string',
+        ]);
+
+        $this->userRepository->update($request->id, [
+            'full_name' => $request->full_name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+        ]);
+
+        return $this->respondSuccess('کاربر با موفقیت بروزرسانی شد', [
+            'full_name' => $request->full_name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+        ]);
     }
 }
