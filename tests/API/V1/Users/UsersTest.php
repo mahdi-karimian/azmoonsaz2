@@ -77,5 +77,18 @@ class UsersTest extends TestCase
             ],
         ]);
     }
+
+    public function test_should_delete_a_user()
+    {
+        $response = $this->call('DELETE', 'api/v1/users', [
+            'id' => '486',
+        ]);
+        $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
 }
 

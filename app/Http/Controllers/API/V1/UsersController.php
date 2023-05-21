@@ -80,4 +80,13 @@ class UsersController extends APIController
         }
     }
 
+    public function delete(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $this->userRepository->delete($request->id);
+        return $this->respondSuccess('کاربر با موفقیت حذف شد ', []);
+    }
+
 }
