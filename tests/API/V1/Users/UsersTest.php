@@ -36,7 +36,7 @@ class UsersTest extends TestCase
         $this->assertEquals(422, $response->status());
     }
 
-    public function test_shuld_updete_the_information_of_user()
+    public function test_should_update_the_information_of_user()
     {
         $response = $this->call('PUT', 'api/v1/users', [
             'id' => '252',
@@ -44,6 +44,26 @@ class UsersTest extends TestCase
             'email' => 'aliiiii@gmail.com',
             'mobile' => '09121112222',
 
+        ]);
+
+        $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'full_name',
+                'email',
+                'mobile',
+            ],
+        ]);
+    }
+
+    public function test_should_update_password()
+    {
+        $response = $this->call('PUT', 'api/v1/users/change-password', [
+            'id' => '486',
+            'password' => '1234567890',
+            'password_repeat' => '1234567890',
         ]);
 
         $this->assertEquals(200, $response->status());
