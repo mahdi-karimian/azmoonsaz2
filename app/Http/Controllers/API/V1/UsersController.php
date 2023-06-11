@@ -9,6 +9,20 @@ use function Monolog\toArray;
 
 class UsersController extends APIController
 {
+    public function index(Request $request)
+    {
+        $this->validate($request, [
+            'search' => 'nullable|string',
+            'page' => 'required|numeric',
+            'pagesize' => 'nullable|numeric',
+        ]);
+
+        $users = $this->userRepository->paginate($request->search, $request->page, $request->pagesize ?? 20);
+
+        return $this->respondSuccess('کابران', $users);
+
+    }
+
     public function __construct(private UserRepositoryInterface $userRepository)
     {
     }
@@ -21,17 +35,18 @@ class UsersController extends APIController
             'mobile' => 'required|string|digits:11',
             'password' => 'required|string',
         ]);
-        $this->userRepository->create([
+        $newUser = $this->userRepository->create([
             'full_name' => $request->full_name,
             'email' => $request->email,
             'mobile' => $request->mobile,
             'password' => app('hash')->make($request->password),
         ]);
-        return $this->respondCreated('کاربر با موفقیت ایجاد شد  ', [
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'password' => $request->password,
+
+         return $this->respondCreated('کاربر با موفقیت ایجاد شد  ', [
+            'full_name' => $newUser->getFullName,
+            'email' => $newUser->getEmail,
+            'mobile' => $newUser->getMobile,
+            'password' => $newUser->getPassword,
         ]);
 
     }
@@ -85,7 +100,10 @@ class UsersController extends APIController
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $this->userRepository->delete($request->id);
+        //$this->userRepository->delete($request->id);
+
+        $user = $this->userRepository->find($request->id);
+        dd($user->getId(), $user->getEmail(), $user->getName());
         return $this->respondSuccess('کاربر با موفقیت حذف شد ', []);
     }
 
