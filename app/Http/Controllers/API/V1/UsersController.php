@@ -42,11 +42,11 @@ class UsersController extends APIController
             'password' => app('hash')->make($request->password),
         ]);
 
-         return $this->respondCreated('کاربر با موفقیت ایجاد شد  ', [
-            'full_name' => $newUser->getFullName,
-            'email' => $newUser->getEmail,
-            'mobile' => $newUser->getMobile,
-            'password' => $newUser->getPassword,
+        return $this->respondCreated('کاربر با موفقیت ایجاد شد  ', [
+            'full_name' => $newUser->getFullName(),
+            'email' => $newUser->getEmail(),
+            'mobile' => $newUser->getMobile(),
+            'password' => $newUser->getPassword(),
         ]);
 
     }
@@ -83,14 +83,20 @@ class UsersController extends APIController
                 'password_repeat' => 'min:6',
             ]);
 
-            $this->userRepository->update($request->id, [
-                'password' => app('hash')->make($request->password),
-            ]);
+            try {
+                $user = $this->userRepository->update($request->id, [
+                    'password' => app('hash')->make($request->password),
+                ]);
+
+            } catch (\Exception $e) {
+                return $this->respondInternalError('بروزرسانی با مشکل مواجه شد ');
+            }
+
 
             return $this->respondSuccess('رمز عبور شما با موفقیت بروزرسانی شد', [
-                'full_name' => $request->full_name,
-                'email' => $request->email,
-                'mobile' => $request->mobile,
+                'full_name' => $user->getFulname(),
+                'email' => $user->getEmail(),
+                'mobile' => $user->getMobile(),
             ]);
         }
     }
@@ -100,10 +106,14 @@ class UsersController extends APIController
         $this->validate($request, [
             'id' => 'required',
         ]);
-        //$this->userRepository->delete($request->id);
+        if (!$this->userRepository->find($request->id)) {
+            return $this->respondNotFound('کاربری با این مشخصات وجود ندارد ');
+        }
 
-        $user = $this->userRepository->find($request->id);
-        dd($user->getId(), $user->getEmail(), $user->getName());
+        if (!$this->userRepository->delete($request->id)) {
+            return $this->respondInternalError('خطایی وجود دارد ');
+        }
+
         return $this->respondSuccess('کاربر با موفقیت حذف شد ', []);
     }
 
