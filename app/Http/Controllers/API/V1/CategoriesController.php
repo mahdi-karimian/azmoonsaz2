@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\contracts\APIController;
 use App\repositories\Contracts\CategoryRepositoryInterface;
-use http\Env\Request;
+use Illuminate\Http\Request;
 
 class CategoriesController extends APIController
 {
@@ -17,13 +17,14 @@ class CategoriesController extends APIController
     {
         $this->validate($request, [
             'name' => 'required|string|min:2|max:255',
-            'slug' => 'required|string|min:2|max:255'
+            'slug' => 'required|string|min:2|max:255',
         ]);
 
         $createdCategory = $this->categoryRepository->create([
             'name' => $request->neme,
             'slug' => $request->slug,
         ]);
+
         return $this->respondCreated('دسته بندی ایجاد شد ', [
             'name' => $createdCategory->getName(),
             'slug' => $createdCategory->getSlug(),

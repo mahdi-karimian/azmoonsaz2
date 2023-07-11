@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\API\contracts\APIController;
 use App\repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Http\Request;
-use function Monolog\toArray;
 
 class UsersController extends APIController
 {
