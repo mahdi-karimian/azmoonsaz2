@@ -9,11 +9,11 @@ use Tests\TestCase;
 class UsersTest extends TestCase
 {
 
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('migrate:refresh');
-    }
+//    public function setUp(): void
+//    {
+//        parent::setUp();
+//        $this->artisan('migrate:refresh');
+//    }
 
     public function test_should_create_a_new_user()
     {
@@ -24,7 +24,7 @@ class UsersTest extends TestCase
             'password' => '123456',
         ];
         $response = $this->call('POST', 'api/v1/users', $newUser);
-
+        $newUser['password'] = json_decode($response->getContent(), true)['data']['password'];
         $this->assertEquals(201, $response->status());
         $newUser['password'] = json_decode($response->getContent(), true)['data']['password'];
         $this->seeInDatabase('users', $newUser);
